@@ -1,26 +1,39 @@
 import React, { useState } from 'react';
 import './App.css';
 
-const useInput = (initValue: string, validator?: (value: string) => boolean) => {
-  const [value, setValue] = useState<string>(initValue)
-  const onChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { target: { value } } = event; //event안의 target 속성안의 value를 가져옴
-    let willUpdate = true;
-    if (typeof validator === "function") {
-      willUpdate = validator(value);
-    }
-    if (willUpdate) setValue(value);
-  }
-  return { value, onChange }
+interface Content {
+  tab: string,
+  content: string
 }
 
-const App = () => {
-  const checkEmail = (value: string) => value.includes("@")
-  const name = useInput("Mr. ", checkEmail);
+const contents: Array<Content> = [
+  {
+    tab: "Section 1",
+    content: "test1"
+  },
+  {
+    tab: "Section 2",
+    content: "test2"
+  },
+]
 
+const useTabs = (init: any, allTabs: Array<Content> = []): { currentItem: Content, changeItem: React.Dispatch<number> } => {
+  const [currentIndex, setCurrentIndex] = useState<number>(init);
+  return {
+    currentItem: allTabs[currentIndex],
+    changeItem: setCurrentIndex
+  }
+}
+const App: React.FC = () => {
+  const { currentItem, changeItem } = useTabs(0, contents)
   return (
     <>
-      <input placeholder="Name" value={name.value} onChange={name.onChange} />
+      <div className="App">
+        {contents.map((content: Content, index: number) => (
+          <button key={index} onClick={() => changeItem(index)}>{content.tab}</button>
+        ))}
+        <div>{currentItem.content}</div>
+      </div>
     </>
   )
 }
