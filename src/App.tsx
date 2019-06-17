@@ -1,39 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './App.css';
 
-interface Content {
-  tab: string,
-  content: string
-}
-
-const contents: Array<Content> = [
-  {
-    tab: "Section 1",
-    content: "test1"
-  },
-  {
-    tab: "Section 2",
-    content: "test2"
-  },
-]
-
-const useTabs = (init: any, allTabs: Array<Content> = []): { currentItem: Content, changeItem: React.Dispatch<number> } => {
-  const [currentIndex, setCurrentIndex] = useState<number>(init);
-  return {
-    currentItem: allTabs[currentIndex],
-    changeItem: setCurrentIndex
-  }
-}
+const useTitle = (initTitle: string) => {
+  const [title, setTitle] = useState(initTitle);
+  const updateTitle = () => {
+    const htmlTitle: HTMLTitleElement | null = document.querySelector("title");
+      if (htmlTitle) {
+        htmlTitle.innerText = title;
+      }
+    }
+  useEffect(updateTitle, [title]);
+  return setTitle;
+} 
 const App: React.FC = () => {
-  const { currentItem, changeItem } = useTabs(0, contents)
+  const titleUpdater = useTitle("Loading...");
+  setTimeout(() => {
+    titleUpdater("HOME")
+  }, 1000);
   return (
     <>
-      <div className="App">
-        {contents.map((content: Content, index: number) => (
-          <button key={index} onClick={() => changeItem(index)}>{content.tab}</button>
-        ))}
-        <div>{currentItem.content}</div>
-      </div>
+     <div>title은 탭바 쪽에 있음</div>
     </>
   )
 }
