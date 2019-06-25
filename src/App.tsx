@@ -1,25 +1,32 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './App.css';
 
-const useTitle = (initTitle: string) => {
-  const [title, setTitle] = useState(initTitle);
-  const updateTitle = () => {
-    const htmlTitle: HTMLTitleElement | null = document.querySelector("title");
-      if (htmlTitle) {
-        htmlTitle.innerText = title;
+const useClick = (onClick: any) => {
+  const element = useRef<HTMLHeadingElement>(null);
+  useEffect(() => {
+    // update, create
+    if(element.current) {
+      element.current.addEventListener("click", onClick)
+    }
+
+    // unmount
+    return () => {
+      if (element.current) {
+        element.current.removeEventListener("click", onClick);
       }
     }
-  useEffect(updateTitle, [title]);
-  return setTitle;
-} 
+  }, [])
+
+  return element;
+}
+
 const App: React.FC = () => {
-  const titleUpdater = useTitle("Loading...");
-  setTimeout(() => {
-    titleUpdater("HOME")
-  }, 1000);
+  const sayHello = () => console.log("say Hellp")
+  const title = useClick(sayHello);
+
   return (
     <>
-     <div>title은 탭바 쪽에 있음</div>
+     <h1 ref={title}>Hi</h1>
     </>
   )
 }
